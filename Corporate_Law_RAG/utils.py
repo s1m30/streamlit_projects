@@ -12,12 +12,11 @@ slide_window = 7 # how many last conversations to remember. This is the slide wi
 COLUMNS = [
     "chunk",
     "category"]
-root = Root(st.session_state.session)
-#Define Search Service
-svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].cortex_search_services[CORTEX_SEARCH_SERVICE]
 
-#Describe Prompt 
+
+#Describe Prompt
 def create_prompt (myquestion):
+    
     chat_history = get_chat_history()
     if chat_history != []: #There is chat_history, so not first question
         question_summary = summarize_question_with_history(chat_history, myquestion)
@@ -58,13 +57,16 @@ def answer_question(myquestion):
 
 
 def get_similar_chunks_search_service(query):
+    root = Root(st.session_state.session)
+    #Define Search Service
+    svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].cortex_search_services[CORTEX_SEARCH_SERVICE]
     if st.session_state.category_value == "ALL":
         response = svc.search(query, COLUMNS, limit=NUM_CHUNKS)
-    else: 
+    elif st.session_state.category_value != "ALL":
         filter_obj = {"@eq": {"category": st.session_state.category_value} }
         response = svc.search(query, COLUMNS, filter=filter_obj, limit=NUM_CHUNKS)
     st.sidebar.json(response.json())
-    return response.json()  
+    return response.json()
 
 #Get the history from the st.session_stage.messages according to the slide window parameter
 def get_chat_history():
