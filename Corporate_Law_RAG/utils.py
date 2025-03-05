@@ -1,6 +1,6 @@
 from snowflake.cortex import complete
 import streamlit as st
-from snowflake.core import Root # requires snowflake>=0.8.0
+
 CORTEX_SEARCH_DATABASE = "STREAMLIT_APP"
 CORTEX_SEARCH_SCHEMA = "DATA_SCHEMA"
 CORTEX_SEARCH_SERVICE= "LEGAL_CHECKER"
@@ -57,8 +57,6 @@ def answer_question(myquestion):
 
 
 def get_similar_chunks_search_service(query):
-    if "root" not in st.session_state:
-        st.session_state.root = Root(st.session_state.session)
     #Define Search Service
     svc = st.session_state.root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].cortex_search_services[CORTEX_SEARCH_SERVICE]
     if st.session_state.category_value == "ALL":

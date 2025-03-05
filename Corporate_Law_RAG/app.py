@@ -2,9 +2,12 @@ import streamlit as st
 from setup import config_options, init_messages
 from utils import answer_question
 from snowflake.snowpark import Session
+from snowflake.core import Root # requires snowflake>=0.8.0
 from setup import get_parameters
 if 'session' not in st.session_state:
     st.session_state.session = Session.builder.configs(get_parameters(st.secrets["ACCOUNT"],st.secrets["USER"],st.secrets["PASSWORD"])).create()
+if "root" not in st.session_state:
+    st.session_state.root = Root(st.session_state.session)
 def main():
     # Ensure credentials are stored in st.session_state
     st.title("📚💡 Smart Company Law Advisor ")
