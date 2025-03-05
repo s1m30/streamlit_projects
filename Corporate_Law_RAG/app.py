@@ -13,8 +13,8 @@ def main():
         "The main source is the CAMA 2020 Act, established by the Corporate Affairs Commission (CAC) to regulate corporate entities in Nigeria. "
     )
     st.link_button("CAMA 2020 Act", "https://natlex.ilo.org/dyn/natlex2/natlex2/files/download/112593/NGA112593.pdf")
-    config_options()
-    init_messages(st.session_state.session)
+    config_options(st.session_state.session)
+    init_messages()
      
     # Display chat messages from history on app rerun
     for message in st.session_state.messages:
