@@ -1,5 +1,5 @@
 import streamlit as st
-from snowflake.snowpark import Session
+
 # service parameters
 CORTEX_SEARCH_DATABASE = "STREAMLIT_APP"
 CORTEX_SEARCH_SCHEMA = "DATA_SCHEMA"
@@ -19,14 +19,12 @@ def get_parameters(account, user, password,role="ACCOUNTADMIN",database=CORTEX_S
     }
     return CONNECTION_PARAMETERS
 
-# Ensure credentials are stored in st.session_state
-if 'session' not in st.session_state:
-    st.session_state.session = Session.builder.configs(get_parameters(st.secrets["ACCOUNT"],st.secrets["USER"],st.secrets["PASSWORD"])).create()
-def config_options():
+
+def config_options(session):
     st.sidebar.selectbox('Select your model:',('mistral-large2', 'llama3.1-70b',
                                     'llama3.1-8b', 'snowflake-arctic'), key="model_name")
 
-    categories = st.session_state.session.table('chunks_table').select('category').distinct().collect()
+    categories = session.table('chunks_table').select('category').distinct().collect()
     cat_list = ['ALL']
     for cat in categories:
         cat_list.append(cat.CATEGORY)  

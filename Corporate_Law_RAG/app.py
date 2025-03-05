@@ -1,11 +1,20 @@
 import streamlit as st
 from setup import config_options, init_messages
 from utils import answer_question
+from snowflake.snowpark import Session
+from setup import get_parameters
 def main():
-    st.title(f":speech_balloon: Nigerian Company law with Snowflake Cortex")
-    st.write("Leverage our FREE Company Legal advisor to your benefit. You can find the main source at https://natlex.ilo.org/dyn/natlex2/natlex2/files/download/112593/NGA112593.pdf")
+    # Ensure credentials are stored in st.session_state
+    if 'session' not in st.session_state:
+        st.session_state.session = Session.builder.configs(get_parameters(st.secrets["ACCOUNT"],st.secrets["USER"],st.secrets["PASSWORD"])).create()
+    st.title("📚💡 Smart Company Law Advisor ")
+    st.write(
+        "Get instant insights on Nigerian company law with AI, based on the Companies and Allied Matters Act (CAMA) 2020. "
+        "The main source is the CAMA 2020 Act, established by the Corporate Affairs Commission (CAC) to regulate corporate entities in Nigeria. "
+    )
+    st.link_button("CAMA 2020 Act", "https://natlex.ilo.org/dyn/natlex2/natlex2/files/download/112593/NGA112593.pdf")
     config_options()
-    init_messages()
+    init_messages(st.session_state.session)
      
     # Display chat messages from history on app rerun
     for message in st.session_state.messages:
