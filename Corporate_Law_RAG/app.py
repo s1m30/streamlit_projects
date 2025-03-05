@@ -3,10 +3,10 @@ from setup import config_options, init_messages
 from utils import answer_question
 from snowflake.snowpark import Session
 from setup import get_parameters
+if 'session' not in st.session_state:
+    st.session_state.session = Session.builder.configs(get_parameters(st.secrets["ACCOUNT"],st.secrets["USER"],st.secrets["PASSWORD"])).create()
 def main():
     # Ensure credentials are stored in st.session_state
-    if 'session' not in st.session_state:
-        st.session_state.session = Session.builder.configs(get_parameters(st.secrets["ACCOUNT"],st.secrets["USER"],st.secrets["PASSWORD"])).create()
     st.title("📚💡 Smart Company Law Advisor ")
     st.write(
         "Get instant insights on Nigerian company law with AI, based on the Companies and Allied Matters Act (CAMA) 2020. "

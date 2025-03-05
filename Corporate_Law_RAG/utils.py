@@ -13,7 +13,7 @@ COLUMNS = [
     "chunk",
     "category"]
 
-
+root = Root(st.session_state.session)
 #Describe Prompt
 def create_prompt (myquestion):
     
@@ -57,7 +57,6 @@ def answer_question(myquestion):
 
 
 def get_similar_chunks_search_service(query):
-    root = Root(st.session_state.session)
     #Define Search Service
     svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].cortex_search_services[CORTEX_SEARCH_SERVICE]
     if st.session_state.category_value == "ALL":
