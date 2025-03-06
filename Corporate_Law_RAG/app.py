@@ -4,26 +4,30 @@ from utils import answer_question
 from snowflake.snowpark import Session
 from snowflake.core import Root # requires snowflake>=0.8.0
 from setup import get_parameters
-if 'session' not in st.session_state:
-    st.session_state.session = Session.builder.configs(get_parameters(st.secrets["ACCOUNT"],st.secrets["USER"],st.secrets["PASSWORD"])).create()
-if "root" not in st.session_state:
-    st.session_state.root = Root(st.session_state.session)
 def main():
-    # Ensure credentials are stored in st.session_state
+    # Ensure credentials are stored in st.session_state and reuse session
+    if 'session' not in st.session_state:
+        st.session_state.session = Session.builder.configs(get_parameters(st.secrets["ACCOUNT"],st.secrets["USER"],st.secrets["PASSWORD"])).create()
+    elif not isinstance(st.session_state.session, Session): # Ensure it's a valid session object, in case of serialization issues
+        st.session_state.session = Session.builder.configs(get_parameters(st.secrets["ACCOUNT"],st.secrets["USER"],st.secrets["PASSWORD"])).create()
+
+    if 'root' not in st.session_state:
+        st.session_state.root = Root(st.session_state)
+
     st.title("📚💡 Smart Company Law Advisor ")
     st.write(
         "Get instant insights on Nigerian company law with AI, based on the Companies and Allied Matters Act (CAMA) 2020. "
         "The main source is the CAMA 2020 Act, established by the Corporate Affairs Commission (CAC) to regulate corporate entities in Nigeria. "
     )
     st.link_button("CAMA 2020 Act", "https://natlex.ilo.org/dyn/natlex2/natlex2/files/download/112593/NGA112593.pdf")
-    config_options(st.session_state.session)
+    config_options()
     init_messages()
-     
+
     # Display chat messages from history on app rerun
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
-    
+
     # Accept user input
     if question := st.chat_input("What company law would you like to know about?"):
         # Add user message to chat history
@@ -34,11 +38,11 @@ def main():
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
-    
+
             question = question.replace("'","")
-    
+
             with st.spinner(f"{st.session_state.model_name} thinking..."):
-                response= answer_question(question)            
+                response= answer_question(question)
                 response = response.replace("'", "")
                 message_placeholder.markdown(response)
         st.session_state.messages.append({"role": "assistant", "content": response})

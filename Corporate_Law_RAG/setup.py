@@ -20,11 +20,11 @@ def get_parameters(account, user, password,role="ACCOUNTADMIN",database=CORTEX_S
     return CONNECTION_PARAMETERS
 
 
-def config_options(session):
+def config_options():
     st.sidebar.selectbox('Select your model:',('mistral-large2', 'llama3.1-70b',
                                     'llama3.1-8b', 'snowflake-arctic'), key="model_name")
 
-    categories = session.table('chunks_table').select('category').distinct().collect()
+    categories = st.session_state.table('chunks_table').select('category').distinct().collect()
     cat_list = ['ALL']
     for cat in categories:
         cat_list.append(cat.CATEGORY)  
