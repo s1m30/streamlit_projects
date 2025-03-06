@@ -12,7 +12,7 @@ def main():
         st.session_state.session = Session.builder.configs(get_parameters(st.secrets["ACCOUNT"],st.secrets["USER"],st.secrets["PASSWORD"])).create()
 
     if 'root' not in st.session_state:
-        st.session_state.root = Root(st.session_state)
+        st.session_state.root = Root(st.session_state.session)
 
     st.title("📚💡 Smart Company Law Advisor ")
     st.write(
