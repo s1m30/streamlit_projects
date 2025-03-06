@@ -11,14 +11,11 @@ CORTEX_SEARCH_SERVICE= "LEGAL_CHECKER"
 ### Default Values
 NUM_CHUNKS = 5# Num-chunks provided as context. Play with this to check how it affects your accuracy
 slide_window = 7 # how many last conversations to remember. This is the slide window.
+
 # Ensure credentials are stored in st.session_state and reuse session
 if 'session' not in st.session_state:
-    st.session_state.session = None
-if 'root' not in st.session_state:
-    st.session_state.root=None
-
-st.session_state.session = Session.builder.configs(get_parameters(st.secrets["ACCOUNT"],st.secrets["USER"],st.secrets["PASSWORD"])).create()
-st.session_state.root=Root(st.session_state.session)
+    st.session_state.session = Session.builder.configs(get_parameters(st.secrets["ACCOUNT"],st.secrets["USER"],st.secrets["PASSWORD"])).create()
+root=Root(st.session_state.session)
 
 # columns to query in the service
 COLUMNS = [
@@ -69,7 +66,7 @@ def answer_question(myquestion):
 
 def get_similar_chunks_search_service(query):
     #Define Search Service 
-    svc = st.session_state.root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].cortex_search_services[CORTEX_SEARCH_SERVICE]
+    svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].cortex_search_services[CORTEX_SEARCH_SERVICE]
     if st.session_state.category_value == "ALL":
         response = svc.search(query, COLUMNS, limit=NUM_CHUNKS)
     elif st.session_state.category_value != "ALL":
