@@ -14,7 +14,7 @@ slide_window = 7 # how many last conversations to remember. This is the slide wi
 # Ensure credentials are stored in st.session_state and reuse session
 if 'session' not in st.session_state:
     st.session_state.session = Session.builder.configs(get_parameters(st.secrets["ACCOUNT"],st.secrets["USER"],st.secrets["PASSWORD"])).create()
-root=Root(st.session_state.session)
+    root=Root(st.session_state.session)
 # columns to query in the service
 COLUMNS = [
     "chunk",
