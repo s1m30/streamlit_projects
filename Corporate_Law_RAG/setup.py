@@ -42,7 +42,7 @@ def config_options():
 
     # st.sidebar.checkbox('Do you want that I remember the chat history?', key="use_chat_history", value = True)
 
-    st.sidebar.checkbox('Debug: Click to see summary generated of previous conversation', key="debug", value = True)
+    st.sidebar.checkbox('Debug: Click to see summary generated of previous conversation', key="debug", value =False)
     st.sidebar.button("Start Over", key="clear_conversation", on_click=init_messages)
     # st.sidebar.expander("Session State").write(st.session_state)
 
