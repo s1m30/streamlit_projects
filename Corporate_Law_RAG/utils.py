@@ -63,7 +63,7 @@ def get_similar_chunks_search_service(query):
     elif st.session_state.category_value != "ALL":
         filter_obj = {"@eq": {"category": st.session_state.category_value} }
         response = SVC.search(query, COLUMNS, filter=filter_obj, limit=NUM_CHUNKS)
-    st.sidebar.json(response.json())
+    # st.sidebar.json(response.json())
     return response.json()
 
 
