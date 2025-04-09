@@ -15,8 +15,8 @@ style_options=[
 ]
 
 st.set_page_config(
-    page_title="QuizWhiz 🤖✒️",
-    page_icon="💡",
+    page_title="IQuill",
+    page_icon="🤖✒️",
     initial_sidebar_state="expanded"
 )
     
@@ -27,7 +27,7 @@ def main():
     quiz generation, and quiz display functionalities.
     """
     
-    st.header("The **Whiz**🤖 invites you to take a **quiz**✨📘")
+    st.header("The **Quill**🤖 invites you to take a **quiz**✨📘")
 
     st.divider()
     # Sidebar or main input for API provider and key

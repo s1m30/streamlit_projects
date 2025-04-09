@@ -78,7 +78,7 @@ def upload_file():
     files = st.file_uploader("Upload files", accept_multiple_files=True,type=["txt", "pdf", "docx"])
     web=st.text_input("Input a website source")
     if st.button("Load Sources"):
-        with st.spinner("Whiz is taking a look"):
+        with st.spinner("The Quill is taking a look"):
             save_sources(files,web)
 
 # Uncomment if you wish to use the Sqlite3 db on your Pc
