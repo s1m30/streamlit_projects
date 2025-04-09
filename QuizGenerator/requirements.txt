@@ -1,7 +1,8 @@
+beautifulsoup4==4.13.3
+pypdf==5.4.0
 streamlit==1.43.2
-ollama==0.4.7
-langchain==0.3.19
-langchain-community==0.3.19
+langchain==0.3.23
+langchain-community==0.3.21
 litellm==1.65.4.post1
 pydantic==2.10.6
 reportlab==4.3.1
