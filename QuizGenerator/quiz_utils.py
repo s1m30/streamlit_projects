@@ -4,6 +4,13 @@ import streamlit as st
 from utils import save_pdf
 from litellm import completion
 
+#Defines model providers
+LLM_models={
+    "OpenAI":"gpt-4o",
+    'Anthropic':"claude-3-sonnet-20240229",
+    "Google AI Studio":"gemini/gemini-1.5-flash"
+}
+
 #Defines Pydantic models for quiz generation
 class Quiz(BaseModel):
     question: str
@@ -133,13 +140,16 @@ def generate_quiz(content_text, question_num,question_style=None):
     # )
     
     #Using Litellm
-    response = completion(
-    api_key="",
-    model="gemini/gemini-1.5-flash",
-    response_format=Quizlist,
-    messages=[{'role': 'system','content': SYSTEM_PROMPT},
-              {'role':'user','content':f"#Content: {content_text}"}],
-    )
+    try:
+        response = completion(
+        api_key=st.session_state.api_key,
+        model=LLM_models.get(st.session_state.providers),
+        response_format=Quizlist,
+        messages=[{'role': 'system','content': SYSTEM_PROMPT},
+                {'role':'user','content':f"#Content: {content_text}"}],
+        )
+    except:
+        return f"API key is invalid"
 
     # Extract response content (which should be a JSON string)
     try:
@@ -158,7 +168,7 @@ def show_download_button(parsed_quiz):
         st.download_button(
             label="Download Quiz PDF",
             data=file,
-            file_name=f"{st.session_state.selected_title}",
+            file_name=f"{st.session_state.selected_title} quiz.pdf",
             mime="application/pdf",
             )
 

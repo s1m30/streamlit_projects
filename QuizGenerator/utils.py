@@ -21,58 +21,44 @@ def is_valid_website(website):
         return title
     else:
         return None
-    
-
-def get_youtube_video_info(url):
-    try:
-        # Send a request to the YouTube video URL
-        response = requests.get("https://www.youtube.com/watch?v={url}", timeout=10)  # Added timeout to prevent indefinite hanging
-        response.raise_for_status()  # Check for HTTP request errors
-
-        # Parse the webpage content
-        soup =bsoup(response.text, 'html.parser')
-
-        # Extract the title from the HTML
-        title_tag = soup.find("title")
-        title = title_tag.text if title_tag else "No Title Found"
-        if title.endswith(" - YouTube"):
-            title = title.replace(" - YouTube", "").strip()
-        return title
-    except requests.exceptions.RequestException as e:
-        return None
-    except Exception as e:
-        return None
-    
 
 def get_titles():
-    """
-    Fetches all unique document titles from the SQLite database.
-    Returns a list of titles or an empty list if no titles are found or the table doesn't exist.
-    """
-    conn = sqlite3.connect('content.db')
-    cursor = conn.cursor()
-    titles = []
+    # Uncomment the below if you want to use the sqlite3 db to store your uploads on your PC
+    # """
+    # Fetches all unique document titles from the SQLite database.
+    # Returns a list of titles or an empty list if no titles are found or the table doesn't exist.
+    # """
+    # conn = sqlite3.connect('content.db')
+    # cursor = conn.cursor()
+    # titles = []
+    # try:
+    #     cursor.execute("SELECT title FROM documents")
+    #     titles = [row[0] for row in cursor.fetchall()]  # Extract titles from query results
+    #     titles = list(set(titles)) # Make titles unique
+    # except sqlite3.OperationalError: # Catch error if table does not exist
+    #     pass # Return empty list if table does not exist
+    # finally:
+    #     conn.close()
+
+    titles=[]
     try:
-        cursor.execute("SELECT title FROM documents")
-        titles = [row[0] for row in cursor.fetchall()]  # Extract titles from query results
-        titles = list(set(titles)) # Make titles unique
-    except sqlite3.OperationalError: # Catch error if table does not exist
-        pass # Return empty list if table does not exist
-    finally:
-        conn.close()
+        titles=list(st.session_state.documents.keys())
+    except:
+        pass
     return titles
 
 
 def get_content(title):
-    """
-    Retrieves content from the SQLite database based on the document title.
-    Returns a list containing the content of the document(s) matching the title.
-    """
-    conn = sqlite3.connect('content.db')
-    cursor = conn.cursor()
-    cursor.execute("SELECT content FROM documents Where title= ?", (title,))
-    content = cursor.fetchall()
-    conn.close()
+    # """
+    # Retrieves content from the SQLite database based on the document title.
+    # Returns a list containing the content of the document(s) matching the title.
+    # """
+    # conn = sqlite3.connect('content.db')
+    # cursor = conn.cursor()
+    # cursor.execute("SELECT content FROM documents Where title= ?", (title,))
+    # content = cursor.fetchall()
+    # conn.close()
+    content=st.session_state.documents.get(title)
     return content
     
 def show_titles_and_pages(contents):
@@ -86,10 +72,9 @@ def show_titles_and_pages(contents):
     """
     total_length = sum(len(content) for content in contents)
     with st.sidebar.expander("Pages"): 
-        page_num=st.selectbox("Page Number",range(len(contents)),key="page_num")
+        page_num=st.selectbox("Page Number",range(len(contents)),key="page_num", help="The page selected determines the quiz that is generated.")
         st.write(contents[page_num])
-    st.divider()
-    st.sidebar.write(total_length)
+    # st.sidebar.write(total_length)
     
 def save_pdf(parsed_quiz):
     """
@@ -125,6 +110,7 @@ def save_pdf(parsed_quiz):
         spaceAfter=12
     )
 
+    Story.append(Paragraph("Questions", styles['Heading2']))
     for i, quiz_item in enumerate(parsed_quiz):
         question_num = i + 1
         question_text = f"{question_num}. {quiz_item['question']}"

@@ -1,6 +1,6 @@
 import sqlite3
 from langchain_community.document_loaders import (
-    TextLoader, PyPDFLoader, YoutubeLoader, WebBaseLoader,Docx2txtLoader
+    TextLoader, PyPDFLoader, WebBaseLoader,Docx2txtLoader
 )
 from langchain_text_splitters import RecursiveCharacterTextSplitter as splitter
 import streamlit as st
@@ -15,11 +15,10 @@ loaders={
         "docx":Docx2txtLoader, 
         "doc":Docx2txtLoader,
         "web":WebBaseLoader,
-        "ytb":YoutubeLoader
     }  
 
 
-def save_sources(files,web:str,ytb:str):
+def save_sources(files,web:str):
     """
     Saves uploaded files, reads their content using appropriate loaders,
     displays the content in the app, and saves the content to the database.
@@ -30,9 +29,7 @@ def save_sources(files,web:str,ytb:str):
             sources.extend(files)
         if web:
             sources.append(web)
-        if ytb:
-            sources.append(ytb)
-            
+
         for source in sources:
             file_type = None
             name = None
@@ -49,9 +46,6 @@ def save_sources(files,web:str,ytb:str):
                 if title:
                     file_type="web"
                     name=title
-                elif get_youtube_video_info(source):
-                    file_type="ytb"
-                    name=get_youtube_video_info(source)
                 else:
                     st.warning(f"Unsupported source: {source}")
                     continue # Skip to the next source if not recognized
@@ -62,9 +56,11 @@ def save_sources(files,web:str,ytb:str):
             for docs in document:
                 content_list.append(docs.page_content)
             contents="".join(content_list)
-            chunks=splitter( chunk_size=4500,chunk_overlap=30,).split_text(contents)
-            for chunk in chunks:
-                save_to_database(name,chunk)
+            chunks=splitter( chunk_size=6500,chunk_overlap=30,).split_text(contents)
+            #For personal use on your local computer 
+            # for chunk in chunks:
+            #     save_to_database(name,chunk)
+            save_to_dict(name,chunks)
 
         st.success("Files sucessfuly loaded")
     except Exception as e:
@@ -81,26 +77,30 @@ def upload_file():
     """
     files = st.file_uploader("Upload files", accept_multiple_files=True,type=["txt", "pdf", "docx"])
     web=st.text_input("Input a website source")
-    ytb=st.text_input("Input youtube source")
     if st.button("Load Sources"):
-        save_sources(files,web,ytb)
+        with st.spinner("Whiz is taking a look"):
+            save_sources(files,web)
 
-def save_to_database(title, content):
-    """
-    Saves document title and content to an SQLite database.
-    Initializes the database and table if they don't exist.
-    """
-    # # Connect to an SQLite database (or create it if it doesn't exist)
-    conn = sqlite3.connect('content.db')
-    # # Create a cursor object using the cursor() method
-    cursor = conn.cursor()
-    # # Create table
-    cursor.execute('''CREATE TABLE IF NOT EXISTS documents
-                  (title text, content text)''')
-    # # Insert a row of data
-    cursor.execute("INSERT INTO documents (title,content) VALUES (?, ?)", (title, content))
-    # # Save (commit) the changes
-    conn.commit()
-    # # Close the connection
-    conn.close()
+# Uncomment if you wish to use the Sqlite3 db on your Pc
+# def save_to_database(title, content):
+#     """
+#     Saves document title and content to an SQLite database.
+#     Initializes the database and table if they don't exist.
+#     """
+#     # # Connect to an SQLite database (or create it if it doesn't exist)
+#     conn = sqlite3.connect('content.db')
+#     # # Create a cursor object using the cursor() method
+#     cursor = conn.cursor()
+#     # # Create table
+#     cursor.execute('''CREATE TABLE IF NOT EXISTS documents
+#                   (title text, content text)''')
+#     # # Insert a row of data
+#     cursor.execute("INSERT INTO documents (title,content) VALUES (?, ?)", (title, content))
+#     # # Save (commit) the changes
+#     conn.commit()
+#     # # Close the connection
+#     conn.close()
 
+def save_to_dict(title,content):
+    st.session_state.documents[title]=content
+    

@@ -1,11 +1,11 @@
-# Personal Quiz Generator with Ollama and Streamlit
+# Personal Quiz Generator with Litellm and Streamlit
 
 ## Overview
 
 This project is a Streamlit application that allows you to generate personalized quizzes from your study materials. It uses:
 
 - **Streamlit:** To create an interactive and user-friendly web interface.
-- **Ollama:** To run open-source language models locally for quiz generation.
+- **Litellm:** To use various language model providers (OpenAI, Google AI Studio, Anthropic) for quiz generation.
 - **Langchain:** To process and load documents from various file formats.
 
 You can upload your documents (PDF, TXT, DOCX), and the application will generate multiple-choice quizzes based on the content, helping you to test your understanding and improve your study process.
@@ -15,7 +15,8 @@ You can upload your documents (PDF, TXT, DOCX), and the application will generat
 Before running this application, ensure you have the following installed:
 
 1.  **Python:** Python 3.x is required. You can download it from [https://www.python.org/](https://www.python.org/).
-2.  **Ollama:** Ollama needs to be installed and running on your system. Follow the installation instructions at [https://ollama.com/](https://ollama.com/). Make sure Ollama is running before starting the Streamlit app.
+2.  **API Key:** You will need an API key for your chosen LLM provider (e.g., OpenAI, Google AI Studio, Anthropic). Refer to the Litellm documentation for instructions on obtaining API keys for different providers. You will need to set this API key in the Streamlit app's sidebar when running the application.
+3.  **Ensure Python Dependencies are installed**: Refer to the installation steps to install necessary python libraries.
 
 ## Installation
 
@@ -29,7 +30,7 @@ Before running this application, ensure you have the following installed:
 2.  **Navigate to the project directory:**
 
     ```bash
-    cd main app # Assuming your Streamlit app files are in 'main app' directory
+cd QuizGenerator # Assuming your Streamlit app files are in 'QuizGenerator' directory
     ```
 
 3.  **Create a virtual environment (recommended):**
@@ -53,12 +54,12 @@ Before running this application, ensure you have the following installed:
 4.  **Install Python dependencies:**
 
     ```bash
-    pip install streamlit langchain-community ollama pdfminer.six pydantic reportlab
+    pip install streamlit langchain-community litellm pdfminer.six pydantic reportlab
     ```
 
 ## Running the Application
 
-To start the Streamlit application, run the following command in your terminal from the `main app` directory:
+To start the Streamlit application, run the following command in your terminal from the `QuizGenerator` directory:
 
 ```bash
 streamlit run app.py
