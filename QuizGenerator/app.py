@@ -58,21 +58,24 @@ def main():
         show_titles_and_pages(contents) # Display document titles and pages
         num_question = st.slider("How many questions would you like to generate?", 5, 25)  # Min 1 question
         st.write(f"You have chosen {num_question} questions.")
+        st.divider()
 
         
         if st.button("Generate Quiz"):
-            if num_question > 0:  # Prevent 0-question quiz
-                quiz = generate_quiz(contents[st.session_state.page_num], num_question, style_option)
-                st.session_state.parsed_quiz = parse_quiz(quiz)  # Store parsed quiz
-                st.session_state.quiz_started = True  # Track quiz state
-                # st.rerun()
-            else:
-                st.warning("Please select at least 1 question.")
+            with st.spinner("Your quiz is being generated"):
+                if num_question > 0:  # Prevent 0-question quiz
+                    quiz = generate_quiz(contents[st.session_state.page_num], num_question, style_option)
+                    st.session_state.parsed_quiz = parse_quiz(quiz)  # Store parsed quiz
+                    st.session_state.quiz_started = True  # Track quiz state
+                    # st.rerun()
+                else:
+                    st.warning("Please select at least 1 question.")
         
         # Display quiz if it has been generated
         if st.session_state.get("quiz_started", False):
-            parsed_quiz = st.session_state.parsed_quiz # Get parsed quiz from session state
-            display_quiz(parsed_quiz)  # Show the parsed quiz
+            with st.container(border=True):
+                parsed_quiz = st.session_state.parsed_quiz # Get parsed quiz from session state
+                display_quiz(parsed_quiz)  # Show the parsed quiz
             show_download_button(parsed_quiz) # Show download button after quiz is shown
 
 if __name__=="__main__":

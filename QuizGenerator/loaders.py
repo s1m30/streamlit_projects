@@ -2,6 +2,7 @@ import sqlite3
 from langchain_community.document_loaders import (
     TextLoader, PyPDFLoader, WebBaseLoader,Docx2txtLoader
 )
+import os
 from langchain_text_splitters import RecursiveCharacterTextSplitter as splitter
 import streamlit as st
 from tempfile import NamedTemporaryFile
@@ -38,7 +39,7 @@ def save_sources(files,web:str):
                 file_type=source.name.split(".")[-1]
                 with NamedTemporaryFile(delete=False, suffix=f".{file_type}") as temp_file:
                     temp_file.write(source.read())
-                    name=source.name
+                    name=os.path.splitext(source.name)[0]
                     source=temp_file.name
                     
             elif isinstance(source,str):
