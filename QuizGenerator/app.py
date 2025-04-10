@@ -64,9 +64,12 @@ def main():
         if st.button("Generate Quiz"):
             with st.spinner("Your quiz is being generated"):
                 if num_question > 0:  # Prevent 0-question quiz
-                    quiz = generate_quiz(contents[st.session_state.page_num], num_question, style_option)
-                    st.session_state.parsed_quiz = parse_quiz(quiz)  # Store parsed quiz
-                    st.session_state.quiz_started = True  # Track quiz state
+                    quiz_result = generate_quiz(contents[st.session_state.page_num], num_question, style_option)
+                    if isinstance(quiz_result, str):
+                        st.error(quiz_result)  # Display the error message to the user
+                    else:
+                        st.session_state.parsed_quiz = parse_quiz(quiz_result)  # Store parsed quiz
+                        st.session_state.quiz_started = True  # Track quiz state
                     # st.rerun()
                 else:
                     st.warning("Please select at least 1 question.")

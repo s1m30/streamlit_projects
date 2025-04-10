@@ -2,7 +2,7 @@
 from pydantic import BaseModel
 import streamlit as st
 from utils import save_pdf
-from litellm import completion
+from litellm import completion, check_valid_key
 
 #Defines model providers
 LLM_models={
@@ -28,13 +28,14 @@ def parse_quiz(quizlist):
     choices, correct answer, and explanation.
     """
     parsed_data = []
-    for quiz in quizlist.quizzes:  # Access the 'quizzes' attribute
-        parsed_data.append({
-            "question": quiz.question,
-             "choices": quiz.choices,
-            "correct_answer": quiz.correct_answer,
-           "explanation": quiz.explanation
-         })
+    if quizlist and hasattr(quizlist, 'quizzes'):  # Ensure quizlist is valid and has 'quizzes'
+        for quiz in quizlist.quizzes:  # Access the 'quizzes' attribute
+            parsed_data.append({
+                "question": quiz.question,
+                "choices": quiz.choices,
+                "correct_answer": quiz.correct_answer,
+                "explanation": quiz.explanation
+            })
     return parsed_data
 
 
@@ -140,27 +141,36 @@ def generate_quiz(content_text, question_num,question_style=None):
     # )
     
     #Using Litellm
+    api_key=st.session_state.api_key
+    model_name=LLM_models.get(st.session_state.providers)
+
+    if api_key and model_name:
+        is_valid_key = check_valid_key(model=model_name, api_key=api_key)
+        if not is_valid_key:
+            return f"The API key for {st.session_state.providers} appears to be invalid. Please double-check it."
+    elif not api_key:
+        return "Please enter your API key."
+        
+    # Using Litellm
     try:
         response = completion(
-        api_key=st.session_state.api_key,
-        model=LLM_models.get(st.session_state.providers),
-        response_format=Quizlist,
-        messages=[{'role': 'system','content': SYSTEM_PROMPT},
-                {'role':'user','content':f"#Content: {content_text}"}],
+            api_key=api_key,
+            model=model_name,
+            response_format=Quizlist,
+            messages=[{'role': 'system', 'content': SYSTEM_PROMPT},
+                      {'role': 'user', 'content': f"#Content: {content_text}"}],
         )
-    except:
-        return f"API key is invalid"
+    except Exception as e:
+        print(f"Error during API call: {e}")
+        return f"An error occurred while calling the API. Please check your API key and provider."
 
     # Extract response content (which should be a JSON string)
     try:
-        # quiz_obj = Quizlist.model_validate_json(response.message.content) #Using Ollama
-        quiz_obj=Quizlist.model_validate_json(response.choices[0].message.content) #Using Litellm
+        quiz_obj = Quizlist.model_validate_json(response.choices[0].message.content)
         return quiz_obj
-
     except Exception as e:
         print("Error parsing response:", e)
-        return None
-
+        return "Error parsing the quiz response."
 
 def show_download_button(parsed_quiz):
     pdf_file = save_pdf(parsed_quiz)  # creates the pdf and returns the file path
