@@ -86,7 +86,7 @@ def upload_file():
     web=st.text_input("Input a website source")
     if st.button("Load Sources"):
         with st.spinner("The Quill is taking a look"):
-            Loader(files,web).save_sources()
+            Loader(files,web).load_sources()
 
 def save_pdf(parsed_quiz):
     """
