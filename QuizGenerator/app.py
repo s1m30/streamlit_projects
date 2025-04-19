@@ -66,7 +66,7 @@ def main():
 if __name__=="__main__":
     st.set_page_config(
     page_title="IQuill",
-    page_icon="🤖",
+    page_icon="✍️",
     initial_sidebar_state="expanded"
 )
     main()
