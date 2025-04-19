@@ -58,13 +58,13 @@ class Loader():
                 for docs in document:
                     content_list.append(docs.page_content)
                 contents="".join(content_list)
-                return contents,name
+                self.save_sources(contents,name)
+            st.success("Loading Completed")
         except Exception as e:
             st.write(e)
             st.warning("Unsupported file format")
 
-    def save_sources(self):
-        contents,name=self.load_sources()
+    def save_sources(self,contents,name):
         if contents:
             chunks=splitter( chunk_size=6500,chunk_overlap=30,).split_text(contents)
             #For personal use on your local computer 
@@ -73,7 +73,6 @@ class Loader():
             self.save_to_dict(name,chunks)
         else:
             st.warning(f"Unable to Extract Contents from {name}")
-        st.success("Loading Completed")
         
     # Uncomment if you wish to use the Sqlite3 db on your Pc
     # def save_to_database(title, content):
