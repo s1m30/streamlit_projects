@@ -4,8 +4,9 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, ListFlowabl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 import requests
-import sqlite3
 import streamlit as st
+from enum import Enum
+from loaders import Loader
 
 def is_valid_website(website):
     response = requests.get(website)
@@ -70,17 +71,27 @@ def show_titles_and_pages(contents):
     Arguments:
     - contents: A list of document contents.            
     """
-    total_length = sum(len(content) for content in contents)
     with st.sidebar.expander("Pages"): 
         page_num=st.selectbox("Page Number",range(len(contents)),key="page_num", help="The page selected determines the quiz that is generated.")
         st.write(contents[page_num])
-    # st.sidebar.write(total_length)
-    
+
+def upload_file():
+    """
+    Creates a file uploader in the sidebar using Streamlit.
+    Allows users to upload multiple files of specified types (txt, pdf, docx).
+    When the 'Load Sources' button is pressed, it calls the save_sources function
+    to process and save the uploaded files.
+    """
+    files = st.file_uploader("Upload file sources", accept_multiple_files=True,type=["txt", "pdf", "docx"])
+    web=st.text_input("Input a website source")
+    if st.button("Load Sources"):
+        with st.spinner("The Quill is taking a look"):
+            Loader(files,web).save_sources()
+
 def save_pdf(parsed_quiz):
     """
-    Generates a PDF file of the quiz from parsed quiz data.
-    Uses ReportLab library to create the PDF document, including questions,
-    answer choices as bullet points, and answer explanations.
+    Uses ReportLab library to create a PDF document from parsed quiz data, including questions,
+    answer choices as bullet points, and explanations.
     """
     doc = SimpleDocTemplate("quiz.pdf", pagesize=letter)
     styles = getSampleStyleSheet()
@@ -131,3 +142,19 @@ def save_pdf(parsed_quiz):
 
     doc.build(Story)
     return "quiz.pdf"
+
+class StyleOptions(Enum):
+    Factual="Straightforward fact-based questions.",
+    Mathematical="Questions involve calculations, formulas, or logical problem-solving.",
+    Coding="Generates coding challenges or theoretical programming questions.",
+    Case_Study="Presents a scenario and asks for analysis or recommendations.",
+    Conceptual="Tests understanding of the fundamental ideas behind a topic.",
+    Theoretical="Questions focus on definitions, concepts, and explanations",
+    Technical="Focuses on implementation, tools, and methodologies." ,
+    Application_Based="Real-world scenarios that apply concepts practically."
+ 
+LLM_models={
+    "OpenAI":"gpt-4o",
+    'Anthropic':"claude-3-sonnet-20240229",
+    "Google AI Studio":"gemini/gemini-1.5-flash"
+}
