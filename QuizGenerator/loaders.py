@@ -73,6 +73,7 @@ class Loader():
             self.save_to_dict(name,chunks)
         else:
             st.warning(f"Unable to Extract Contents from {name}")
+        st.success("Loading Completed")
         
     # Uncomment if you wish to use the Sqlite3 db on your Pc
     # def save_to_database(title, content):
