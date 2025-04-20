@@ -1,4 +1,4 @@
-import sqlite3
+from bs4 import BeautifulSoup as bsoup
 from langchain_community.document_loaders import (
     TextLoader, PyPDFLoader, WebBaseLoader,Docx2txtLoader
 )
@@ -6,7 +6,7 @@ import os
 from langchain_text_splitters import RecursiveCharacterTextSplitter as splitter
 import streamlit as st
 from tempfile import NamedTemporaryFile
-from utils import *
+import requests
 
 loaders={
         "txt":TextLoader,
@@ -20,7 +20,22 @@ class Loader():
     def __init__(self,files,web:str):
         self.files=files
         self.web=web
+    
+    def is_valid_website(self,website):
+        response = requests.get(website)
+        if response.status_code == 200:
+            soup = bsoup(response.content, 'html.parser')
+            title_tag = soup.find('title')
+            # Parse the webpage content
+            soup =bsoup(response.text, 'html.parser')
 
+            # Extract the title from the HTML
+            title_tag = soup.find("title")
+            title = title_tag.text if title_tag else "No Title Found"
+            return title
+        else:
+            return None
+    
     def load_sources(self):
         """
         Saves uploaded files, reads their content using appropriate loaders,
@@ -44,7 +59,7 @@ class Loader():
                         source=temp_file.name
                         
                 elif isinstance(source,str):
-                    title=is_valid_website(source)
+                    title=self.is_valid_website(source)
                     if title:
                         file_type="web"
                         name=title

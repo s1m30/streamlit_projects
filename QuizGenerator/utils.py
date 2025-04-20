@@ -1,4 +1,3 @@
-from bs4 import BeautifulSoup as bsoup
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, ListFlowable
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -7,21 +6,6 @@ import requests
 import streamlit as st
 from enum import Enum
 from loaders import Loader
-
-def is_valid_website(website):
-    response = requests.get(website)
-    if response.status_code == 200:
-        soup = bsoup(response.content, 'html.parser')
-        title_tag = soup.find('title')
-          # Parse the webpage content
-        soup =bsoup(response.text, 'html.parser')
-
-        # Extract the title from the HTML
-        title_tag = soup.find("title")
-        title = title_tag.text if title_tag else "No Title Found"
-        return title
-    else:
-        return None
 
 def get_titles():
     # Uncomment the below if you want to use the sqlite3 db to store your uploads on your PC
