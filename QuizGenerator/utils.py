@@ -2,7 +2,6 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, ListFlowable
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
-import requests
 import streamlit as st
 from enum import Enum
 from loaders import Loader
@@ -72,6 +71,7 @@ def upload_file():
         with st.spinner("The Quill is taking a look"):
             Loader(files,web).load_sources()
 
+
 def save_pdf(parsed_quiz):
     """
     Uses ReportLab library to create a PDF document from parsed quiz data, including questions,
@@ -127,6 +127,7 @@ def save_pdf(parsed_quiz):
     doc.build(Story)
     return "quiz.pdf"
 
+
 class StyleOptions(Enum):
     Factual="Straightforward fact-based questions.",
     Mathematical="Questions involve calculations, formulas, or logical problem-solving.",
@@ -137,6 +138,7 @@ class StyleOptions(Enum):
     Technical="Focuses on implementation, tools, and methodologies." ,
     Application_Based="Real-world scenarios that apply concepts practically."
  
+
 LLM_models={
     "OpenAI":"gpt-4o",
     'Anthropic':"claude-3-sonnet-20240229",

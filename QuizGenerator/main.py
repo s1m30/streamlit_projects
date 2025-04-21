@@ -6,16 +6,12 @@ from litellm import check_valid_key
 
 def main():
     """
-    Main function to run the Streamlit QuizGenerator app.
     Sets up the header, sidebar, document selection, content display,
     quiz generation, and quiz display functionalities.
     """
     if not "documents" in st.session_state:
         st.session_state.documents={}
 
-    st.header("The **Quill**🤖 invites you to take a **quiz**✨📘")
-    st.divider()
-    
     # Sidebar or main input for API provider and key
     with st.sidebar:
         st.title("🔑 API Settings")
@@ -63,10 +59,3 @@ def main():
                 display_quiz(parsed_quiz)  # Show the parsed quiz
             show_download_button(parsed_quiz) # Show download button after quiz is shown
 
-if __name__=="__main__":
-    st.set_page_config(
-    page_title="IQuill",
-    page_icon="✍️",
-    initial_sidebar_state="expanded"
-)
-    main()

@@ -50,6 +50,7 @@ def display_quiz(parsed_quiz):
             st.session_state.answered = False  # Reset for next question
             st.rerun()  # Refresh to load next question
 
+
 def submit(answer,correct_answer,explanation):
     # Submit button logic
     if answer:
@@ -61,6 +62,7 @@ def submit(answer,correct_answer,explanation):
 
         # Show explanation
         with st.expander("See explanation"):
+            st.subheader(f"Answer: {correct_answer}", divider="gray")
             st.write(explanation)
 
         # Mark question as answered
@@ -79,11 +81,12 @@ def grade_quiz(correct_answers, total_questions):
 
 def show_download_button(parsed_quiz):
     pdf_file = save_pdf(parsed_quiz)  # creates the pdf and returns the file path
+    title=st.session_state.selected_title
     with open(pdf_file, "rb") as file:
         st.download_button(
             label="Download Quiz PDF",
             data=file,
-            file_name=f"{st.session_state.selected_title} quiz.pdf",
+            file_name = f"{title[:10] if len(title) > 10 else title} quiz.pdf",
             mime="application/pdf",
             )
 

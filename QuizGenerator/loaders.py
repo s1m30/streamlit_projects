@@ -36,6 +36,7 @@ class Loader():
         else:
             return None
     
+
     def load_sources(self):
         """
         Saves uploaded files, reads their content using appropriate loaders,
@@ -79,17 +80,23 @@ class Loader():
             st.write(e)
             st.warning("Unsupported file format")
 
+
     def save_sources(self,contents,name):
         if contents:
             chunks=splitter( chunk_size=6500,chunk_overlap=30,).split_text(contents)
+            self.save_to_dict(name,chunks)
             #For personal use on your local computer 
             # for chunk in chunks:
             #     save_to_database(name,chunk)
-            self.save_to_dict(name,chunks)
         else:
             st.warning(f"Unable to Extract Contents from {name}")
+      
         
-    # Uncomment if you wish to use the Sqlite3 db on your Pc
+    def save_to_dict(self,title,content):
+        st.session_state.documents[title]=content
+
+
+    # Uncomment if you wish to use the Sqlite3 db on your Pc instead
     # def save_to_database(title, content):
     #     """
     #     Saves document title and content to an SQLite database.
@@ -108,7 +115,4 @@ class Loader():
     #     conn.commit()
     #     # # Close the connection
     #     conn.close()
-
-    def save_to_dict(self,title,content):
-        st.session_state.documents[title]=content
         
