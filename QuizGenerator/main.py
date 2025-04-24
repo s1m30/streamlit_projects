@@ -43,6 +43,7 @@ def main():
                 is_valid_key = check_valid_key(model=st.session_state.model_name, api_key=api_key)
                 if not is_valid_key:
                     st.warning(f"The API key for {st.session_state.providers} appears to be invalid. Please double-check it.")
+                    st.rerun()
                 else:
                     with st.spinner("Your quiz is being generated"):
                         quiz_gen_obj=Quizgenerator(contents[st.session_state.page_num], num_question, style_option,style_desc)
